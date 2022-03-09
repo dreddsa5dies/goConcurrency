@@ -6,6 +6,7 @@
   <summary>Solvings</summary>
 
 - [Pipeline](projects/pipelineReadFile/)
+- [Buffer](projects/bufferWC/)
 
 </details>
 
