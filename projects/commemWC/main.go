@@ -39,7 +39,20 @@ func (d *data) counts(f string) error {
 func (d *data) print() {
 	d.RWM.RLock()
 	fmt.Fprintln(os.Stdout, d.nc, d.wc, d.bc, d.fa)
-	d.RWM.RUnlock()
+	defer d.RWM.RUnlock()
+}
+
+var allCounts data
+
+func (d *data) allCount() {
+	allCounts.RWM.Lock()
+
+	allCounts.bc += d.bc
+	allCounts.nc += d.nc
+	allCounts.cc += d.cc
+	allCounts.wc += d.wc
+
+	defer allCounts.RWM.Unlock()
 }
 
 func main() {
@@ -63,12 +76,17 @@ func main() {
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err)
 				}
+				d.allCount()
 				d.print()
 			}(fileString)
 		} else {
 			fmt.Fprintln(os.Stdout, "No such file", files[i])
 		}
 	}
+
+	waitGroup.Add(1)
+	defer allCounts.print()
+	waitGroup.Done()
 
 	waitGroup.Wait()
 }
