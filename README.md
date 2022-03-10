@@ -8,6 +8,7 @@
 - [Pipeline](projects/pipelineReadFile/)
 - [Buffer](projects/bufferWC/)
 - [Common memory](projects/commemWC/)
+- [Control goroutine](projects/conGo/)
 
 </details>
 
