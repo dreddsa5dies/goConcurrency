@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"sync"
@@ -73,12 +74,24 @@ func main() {
 		return
 	}
 
+	f, err := os.Create("test.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer f.Close()
+
 	go create(nJobs)
 	finished := make(chan interface{})
 	go func() {
 		for d := range data {
-			fmt.Printf("Client ID: %d\tint: ", d.job.id)
-			fmt.Printf("%d\tsquare: %d\n", d.job.integer, d.square)
+			_, err = fmt.Fprint(f, "Client ID:  ", d.job.id, " \tint: ")
+			if err != nil {
+				log.Println(err)
+			}
+			_, err = fmt.Fprintln(f, d.job.integer, "\tsquare: ", d.square)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 		finished <- true
 	}()
